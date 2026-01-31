@@ -1,4 +1,4 @@
-name: Deploy Digital Twin
+name: Deploy Digital Twin for Linta
 
 on:
   push:
