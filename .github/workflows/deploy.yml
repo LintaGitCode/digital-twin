@@ -49,7 +49,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_wrapper: false  # Important: disable wrapper to get raw outputs
+          terraform_wrapper: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -60,11 +60,22 @@ jobs:
 
       - name: Run Deployment Script
         run: |
-          # Set environment variables for the script
+          # 1. Automatically find the state bucket
+          STATE_BUCKET=$(aws s3api list-buckets --query "Buckets[?starts_with(Name, 'twin-terraform-state-')].Name" --output text)
+          
+          if [ -z "$STATE_BUCKET" ] || [ "$STATE_BUCKET" == "None" ]; then
+            echo "Error: Could not find the automated state bucket!"
+            exit 1
+          fi
+          
+          echo "Found state bucket: $STATE_BUCKET"
+
+          # 2. Export environment variables for the script
+          export TF_VAR_state_bucket=$STATE_BUCKET
           export AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }}
           export DEFAULT_AWS_REGION=${{ secrets.DEFAULT_AWS_REGION }}
           
-          # Make script executable and run it
+          # 3. Make script executable and run it
           chmod +x scripts/deploy.sh
           ./scripts/deploy.sh ${{ github.event.inputs.environment || 'dev' }}
         env:
