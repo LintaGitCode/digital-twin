@@ -14,10 +14,17 @@ echo "📦 Building Lambda package..."
 # 2. Terraform workspace & apply
 cd terraform
 # terraform init -input=false
-AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+# AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+# AWS_REGION=${DEFAULT_AWS_REGION:-us-east-1}
+# terraform init -input=false \
+#   -backend-config="bucket=twin-terraform-state-${AWS_ACCOUNT_ID}" \
+# terraform init -input=false
+# Use the passed env var or fallback to auto-discovery
+STATE_BUCKET=${TF_VAR_state_bucket:-twin-terraform-state-$(aws sts get-caller-identity --query Account --output text)}
 AWS_REGION=${DEFAULT_AWS_REGION:-us-east-1}
+
 terraform init -input=false \
-  -backend-config="bucket=twin-terraform-state-${AWS_ACCOUNT_ID}" \
+  -backend-config="bucket=${STATE_BUCKET}" \
   -backend-config="key=${ENVIRONMENT}/terraform.tfstate" \
   -backend-config="region=${AWS_REGION}" \
   -backend-config="dynamodb_table=twin-terraform-locks" \
