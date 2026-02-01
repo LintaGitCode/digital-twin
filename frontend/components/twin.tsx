@@ -10,7 +10,6 @@ interface Message {
     timestamp: Date;
 }
 
-
 export default function Twin() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
