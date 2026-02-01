@@ -36,6 +36,7 @@ export default function Twin() {
             timestamp: new Date(),
         };
 
+        
         setMessages(prev => [...prev, userMessage]);
         setInput('');
         setIsLoading(true);
