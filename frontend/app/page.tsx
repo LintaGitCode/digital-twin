@@ -9,7 +9,7 @@ export default function Home() {
             AI in Production
           </h1>
           <p className="text-center text-gray-600 mb-8">
-            Deploy your Digital Twin to the cloud
+              Linta's Digital Linkedin Twin
           </p>
 
           <div className="h-[600px]">
